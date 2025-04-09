@@ -10,13 +10,13 @@ headers = {'Authorization':'Bearer %s' % os.getenv('GITHUB_TOKEN') }
 awards = []
 
 def getIssue(n):
-	url = 'https://api.github.com/repos/stackernews/stacker.news/issues/' + n
+	url = 'https://api.github.com/repos/brymut/test-repo/issues/' + n
 	r = sess.get(url, headers=headers)
 	j = json.loads(r.text)
 	return j
 
 def findIssueInPR(j):
-	p = re.compile('(#|https://github.com/stackernews/stacker.news/issues/)([0-9]+)')
+	p = re.compile('(#|https://github.com/brymut/test-repo/issues/)([0-9]+)')
 	for m in p.finditer(j['title']):
 		return m.group(2)
 	if not 'body' in j or j['body'] is None:
@@ -47,7 +47,7 @@ def addAward(user, kind, pr, issue, difficulty, priority, count, amount):
 		print('%s,%s,%s,%s,%s,%s,%s,,%s,%s,???' % (user, kind, pr, issue, difficulty, priority, count, amount, addr), file=f)
 
 def countReviews(pr):
-	url = 'https://api.github.com/repos/stackernews/stacker.news/issues/%s/timeline' % pr
+	url = 'https://api.github.com/repos/brymut/test-repo/issues/%s/timeline' % pr
 	r = sess.get(url, headers=headers)
 	j = json.loads(r.text)
 	count = 0
