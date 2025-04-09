@@ -1,6 +1,6 @@
 name: extend-awards
 on:
-  pull_request:
+  pull_request_target:
     types: [closed]
     branches:
       - master
@@ -11,10 +11,9 @@ permissions:
 jobs:
   if_merged:
     if: |
-      github.event_name == 'pull_request' &&
+      github.event_name == 'pull_request_target' &&
       github.event.action == 'closed' &&
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.head.ref != 'extend-awards/patch'
+      github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,21 +24,21 @@ jobs:
       - name: Run extend-awards script
         run: python extend-awards.py
         env:
-          GITHUB_TOKEN: ${{ secrets.SECRET }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_CONTEXT: ${{ toJson(github) }}
       - name: Configure Git
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-      - name: Fetch and rebase branch
+      - name: Create Unique Branch
         run: |
-          git fetch origin extend-awards/patch || true
-          git rebase origin/extend-awards/patch || true
+          BRANCH_NAME="extend-awards/patch-$(date +%s)"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: awards.csv
-          branch: extend-awards/patch
+          branch: ${{ env.BRANCH_NAME }}
           commit-message: Extending awards.csv
           title: Extending awards.csv
           body: A PR was merged that solves an issue and awards.csv should be extended.
