@@ -1,6 +1,6 @@
 name: extend-awards
 on:
-  pull_request_target:
+  pull_request:
     types: [closed]
     branches:
       - master
