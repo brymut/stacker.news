@@ -81,7 +81,7 @@ def checkPR(i):
 	if amount * multiplier <= 0:
 		print('issue gives no award')
 		return
-	count = countReviews(pr)
+	count = 0
 	if count >= 10:
 		print('too many reviews, no award')
 		return
