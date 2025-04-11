@@ -39,7 +39,9 @@ jobs:
         if: env.exists == 'true'
         run: |
           git checkout extend-awards/patch
-          git merge --no-edit HEAD@{1}
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git commit -am "Extending awards.csv"
           git push origin extend-awards/patch
       - uses: peter-evans/create-pull-request@v7
         if: env.exists == 'false'
