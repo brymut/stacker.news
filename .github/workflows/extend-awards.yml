@@ -33,7 +33,6 @@ jobs:
           git commit -am "Modify tracked file during workflow"
       - uses: peter-evans/create-pull-request@v7
         with:
-          add-paths: awards.csv
           branch: extend-awards/patch
           commit-message: Extending awards.csv
           title: Extending awards.csv
