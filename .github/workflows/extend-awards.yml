@@ -34,7 +34,7 @@ jobs:
       - name: Fetch and rebase branch
         run: |
           git fetch origin extend-awards/patch || true
-          git rebase origin/extend-awards/patch || true
+          git reset --soft origin/extend-awards/patch || true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
