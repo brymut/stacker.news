@@ -22,10 +22,6 @@ jobs:
         with:
           python-version: '3.13' 
       - run: pip install requests
-      - run: python extend-awards.py
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_CONTEXT: ${{ toJson(github) }}
       - name: Check if branch exists
         id: check_branch
         run: |
@@ -41,6 +37,13 @@ jobs:
           git checkout extend-awards/patch
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - run: python extend-awards.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+      - name: Commit changes and push to existing branch
+        if: env.exists == 'true'
+        run: |
           git commit -am "Extending awards.csv"
           git push origin extend-awards/patch
       - uses: peter-evans/create-pull-request@v7
