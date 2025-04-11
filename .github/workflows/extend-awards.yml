@@ -26,13 +26,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_CONTEXT: ${{ toJson(github) }}
-      - name: Create commits
+      - name: Check if branch exists
+        id: check_branch
         run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -am "Modify tracked file during workflow"
+          git fetch origin extend-awards/patch || echo "Branch does not exist"
+          if git show-ref --verify --quiet refs/remotes/origin/extend-awards/patch; then
+            echo "exists=true" >> $GITHUB_ENV
+          else
+            echo "exists=false" >> $GITHUB_ENV
+          fi
+      - name: Handle existing branch
+        if: env.exists == 'true'
+        run: |
+          git checkout extend-awards/patch
+          git merge --no-edit HEAD@{1}
+          git push origin extend-awards/patch
       - uses: peter-evans/create-pull-request@v7
+        if: env.exists == 'false'
         with:
+          add-paths: awards.csv
           branch: extend-awards/patch
           commit-message: Extending awards.csv
           title: Extending awards.csv
