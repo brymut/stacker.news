@@ -31,10 +31,11 @@ jobs:
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-      - name: Fetch and rebase branch
+      - name: Fetch and merge branch
         run: |
           git fetch origin extend-awards/patch || true
-          git reset --soft origin/extend-awards/patch || true
+          git checkout -B extend-awards/patch origin/extend-awards/patch || git checkout -b extend-awards/patch
+          git merge --no-edit origin/extend-awards/patch || true
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v7
         with:
