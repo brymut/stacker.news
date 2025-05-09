@@ -16,7 +16,7 @@ def getIssue(n):
 	return j
 
 def findIssuesInPR(j):
-	p = re.compile('(#|https://github.com/stackernews/stacker.news/issues/)([0-9]+)')
+	p = re.compile('(#|https://github.com/brymut/test-repo/issues/)([0-9]+)')
 	issues = []
 	for m in p.finditer(j['title']):
 		issues.append(m.group(2))
