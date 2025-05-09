@@ -17,14 +17,14 @@ def getIssue(n):
 
 def findIssuesInPR(j):
 	p = re.compile('(#|https://github.com/brymut/test-repo/issues/)([0-9]+)')
-	issues = []
+	issues = set()
 	for m in p.finditer(j['title']):
-		issues.append(m.group(2))
+		issues.add(m.group(2))
 	if not 'body' in j or j['body'] is None:
 		return
 	for s in j['body'].split('\n'):
 		for m in p.finditer(s):
-			issues.append(m.group(2))
+			issues.add(m.group(2))
 	print(issues)
 	return issues
 
