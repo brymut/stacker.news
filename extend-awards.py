@@ -17,7 +17,6 @@ def getIssue(n):
 
 def findIssueInPR(j):
 	p = re.compile('(#|https://github.com/brymut/test-repo/issues/)([0-9]+)')
-	print('looking for issue in %s' % j)
 	for m in p.finditer(j['title']):
 		return m.group(2)
 	if not 'body' in j or j['body'] is None:
@@ -102,4 +101,6 @@ with open(fn, 'r') as f:
 		awards.append(s.split(','))
 
 j = json.loads(os.getenv('GITHUB_CONTEXT'))
+print('the github context')
+print(j)
 checkPR(j['event']['pull_request'])
