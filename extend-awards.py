@@ -49,7 +49,7 @@ def addAward(user, kind, pr, issue, difficulty, priority, count, amount):
 		print('%s,%s,%s,%s,%s,%s,%s,,%s,%s,???' % (user, kind, pr, issue, difficulty, priority, count, amount, addr), file=f)
 
 def countReviews(pr):
-	url = 'https://api.github.com/repos/stackernews/stacker.news/issues/%s/timeline' % pr
+	url = 'https://api.github.com/repos/brymut/stacker.news/issues/%s/timeline' % pr
 	r = sess.get(url, headers=headers)
 	j = json.loads(r.text)
 	count = 0
