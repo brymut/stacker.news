@@ -10,7 +10,7 @@ headers = {'Authorization':'Bearer %s' % os.getenv('GITHUB_TOKEN') }
 awards = []
 
 def getIssue(n):
-	url = 'https://api.github.com/repos/brymut/test-repo/issues/' + n
+	url = 'https://api.github.com/repos/brymut/stacker.news/issues/' + n
 	r = sess.get(url, headers=headers)
 	j = json.loads(r.text)
 	return j
@@ -19,7 +19,7 @@ def findIssuesInPR(j):
 	closing_keywords = ['close', 'closes', 'closed', 'fix', 'fixes', 'fixed', 'resolve', 'resolves', 'resolved']
 	# Support both #123 and full URL
 	closing_pattern = re.compile(
-		r'(?i)\b(' + '|'.join(closing_keywords) + r')\s+(?:#|https://github\.com/brymut/test-repo/issues/)(\d+)'
+		r'(?i)\b(' + '|'.join(closing_keywords) + r')\s+(?:#|https://github\.com/brymut/stacker\.news/issues/)(\d+)'
 	)
 	issues = set()
 	for text in [j.get('title', ''), j.get('body', '') or '']:
