@@ -3,7 +3,7 @@
 <img height="50" alt="Internet Communities with Bitcoin Economies" src="https://github.com/stackernews/stacker.news/assets/34140557/a8ccc5dc-c453-46dc-be74-60dd0a42ce09">
 </a>
 </p>
-Test PR-2
+Test PR-1
 
 - Stacker News is trying to fix online communities with economics
 - What You See is What We Ship (look ma, I invented an initialism)
