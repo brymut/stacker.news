@@ -4,19 +4,33 @@ import { parseInternalLinks } from '@/lib/url'
 
 export async function getMentions ({ text }, { me, tx }) {
   const mentionPattern = /\B@[\w_]+/gi
-  const names = text.match(mentionPattern)?.map(m => m.slice(1))
-  if (names?.length > 0) {
+
+  // collect first occurrence of each token as typed by the author (preserve case)
+  const tokenMap = new Map()
+  const matches = text.match(mentionPattern) || []
+  for (const m of matches) {
+    const token = m.slice(1) // drop leading '@'
+    const key = token.toLowerCase()
+    if (!tokenMap.has(key)) tokenMap.set(key, token)
+  }
+
+  if (tokenMap.size > 0) {
+    // find matching users by case-insensitive name; exclude author/anon
     const users = await tx.user.findMany({
       where: {
         name: {
-          in: names
+          in: Array.from(tokenMap.keys()) // citext => case-insensitive
         },
         id: {
           not: me?.id || USER_ID.anon
         }
       }
     })
-    return users.map(user => ({ userId: user.id }))
+    // store the immutable userId and the originally typed token (nym)
+    return users.map(user => ({
+      userId: user.id,
+      nym: tokenMap.get(user.name.toLowerCase()) || user.name
+    }))
   }
   return []
 }

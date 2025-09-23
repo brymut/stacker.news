@@ -1458,6 +1458,17 @@ export default {
         AND data->>'userId' = ${meId}::TEXT
         AND state = 'created'`
       return reminderJobs[0]?.startafter ?? null
+    },
+    textMentions: async (item, args, { models }) => {
+      const rows = await models.mention.findMany({
+        where: { itemId: Number(item.id) },
+        include: { user: true }
+      })
+      // GraphQL TextMention has fields { nym, user }
+      return rows.map(r => ({
+        nym: r.nym,
+        user: r.user
+      }))
     }
   }
 }

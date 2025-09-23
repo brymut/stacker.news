@@ -22,7 +22,7 @@ import Embed from './embed'
 import remarkMath from 'remark-math'
 import remarkToc from '@/lib/remark-toc'
 
-const rehypeSNStyled = () => rehypeSN({
+const rehypeSNStyled = (mentionResolver) => rehypeSN({
   stylers: [{
     startTag: '<sup>',
     endTag: '</sup>',
@@ -31,7 +31,8 @@ const rehypeSNStyled = () => rehypeSN({
     startTag: '<sub>',
     endTag: '</sub>',
     className: styles.subscript
-  }]
+  }],
+  mentionResolver
 })
 
 const baseRemarkPlugins = [
@@ -53,7 +54,7 @@ export function SearchText ({ text }) {
 }
 
 // this is one of the slowest components to render
-export default memo(function Text ({ rel = UNKNOWN_LINK_REL, imgproxyUrls, children, tab, itemId, outlawed, topLevel }) {
+export default memo(function Text ({ rel = UNKNOWN_LINK_REL, imgproxyUrls, children, tab, itemId, outlawed, topLevel, mentions }) {
   // include remarkToc if topLevel
   const remarkPlugins = topLevel ? [...baseRemarkPlugins, remarkToc] : baseRemarkPlugins
 
@@ -120,6 +121,22 @@ export default memo(function Text ({ rel = UNKNOWN_LINK_REL, imgproxyUrls, child
   },
   [outlawed, imgproxyUrls, topLevel, rel])
 
+  // map original typed token -> current user name using mentions from server
+  const mentionMap = useMemo(() => {
+    const map = new Map()
+    mentions?.forEach(m => {
+      const token = m?.nym
+      const current = m?.user?.name
+      if (token && current) map.set(token.toLowerCase(), current)
+    })
+    return map
+  }, [mentions])
+
+  const mentionResolver = useCallback((token) => {
+    if (!token) return undefined
+    return mentionMap.get(token.toLowerCase())
+  }, [mentionMap])
+
   const components = useMemo(() => ({
     h1: ({ node, id, ...props }) => <h1 id={topLevel ? id : undefined} {...props} />,
     h2: ({ node, id, ...props }) => <h2 id={topLevel ? id : undefined} {...props} />,
@@ -155,12 +172,12 @@ export default memo(function Text ({ rel = UNKNOWN_LINK_REL, imgproxyUrls, child
     <ReactMarkdown
       components={components}
       remarkPlugins={remarkPlugins}
-      rehypePlugins={[rehypeSNStyled, mathJaxPlugin].filter(Boolean)}
+      rehypePlugins={[rehypeSNStyled(mentionResolver), mathJaxPlugin].filter(Boolean)}
       remarkRehypeOptions={{ clobberPrefix: `itemfn-${itemId}-` }}
     >
       {children}
     </ReactMarkdown>
-  ), [components, remarkPlugins, mathJaxPlugin, children, itemId])
+  ), [components, remarkPlugins, mathJaxPlugin, children, itemId, mentionResolver])
 
   const showOverflow = useCallback(() => setShow(true), [setShow])
 

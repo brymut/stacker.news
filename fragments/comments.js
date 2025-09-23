@@ -21,6 +21,13 @@ export const COMMENT_FIELDS = gql`
     invoicePaidAt
     deletedAt
     text
+    textMentions {
+      nym
+      user {
+        id
+        name
+      }
+    }
     user {
       id
       name
@@ -71,6 +78,13 @@ export const COMMENT_FIELDS_NO_CHILD_COMMENTS = gql`
     invoicePaidAt
     deletedAt
     text
+    textMentions {
+      nym
+      user {
+        id
+        name
+      }
+    }
     user {
       id
       name

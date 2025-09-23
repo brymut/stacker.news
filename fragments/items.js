@@ -122,6 +122,13 @@ export const ITEM_FULL_FIELDS = gql`
         name
       }
     }
+    textMentions {
+      nym
+      user {
+        id
+        name
+      }
+    }
   }`
 
 export const ITEM_OTS_FIELDS = gql`

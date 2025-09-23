@@ -87,6 +87,11 @@ export default gql`
     randPollOptions: Boolean
   }
 
+  type TextMention {
+    nym: String
+    user: User!
+  }
+
   type Items {
     cursor: String
     items: [Item!]!
@@ -174,6 +179,7 @@ export default gql`
     invoice: Invoice
     cost: Int!
     meCommentsViewedAt: Date
+    textMentions: [TextMention!]
   }
 
   input ItemForwardInput {

@@ -800,6 +800,7 @@ model Mention {
   updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
   itemId    Int
   userId    Int
+  nym       String?  @db.Citext
   item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
