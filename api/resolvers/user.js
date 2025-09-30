@@ -136,6 +136,30 @@ export default {
       if (id) id = Number(id)
       return await models.user.findUnique({ where: { id, name } })
     },
+    userByMention: async (parent, { name, itemId }, { models }) => {
+      let user = await models.user.findUnique({ where: { name } })
+      if (!user && itemId) {
+        const mentions = await models.mention.findMany({
+          where: {
+            itemId: Number(itemId)
+          },
+          include: {
+            user: true,
+            item: true
+          }
+        })
+        const matchingMention = mentions.find(mention => {
+          const text = mention.item?.text || ''
+          const escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+          const mentionRegex = new RegExp(`\\B@${escapedName}(?![\\w_])`, 'gi')
+          return mentionRegex.test(text)
+        })
+        if (matchingMention) {
+          user = matchingMention.user
+        }
+      }
+      return user
+    },
     users: async (parent, args, { models }) =>
       await models.user.findMany(),
     nameAvailable: async (parent, { name }, { models, me }) => {
